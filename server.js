@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const res = require('express/lib/response')
 const PORT = 8000
 const MongoClient = require('mongodb').MongoClient
 const connectionString = 'mongodb+srv://nachokal:Wakeme09842@cluster0.xhlyo.mongodb.net/?retryWrites=true&w=majority'
@@ -74,13 +75,18 @@ MongoClient.connect(connectionString)
     const db = client.db('star-trek-api')
     const collection = db.collection('alien-info')
     
-    app.get('/', (request, response)=>{
-        response.sendFile(__dirname + '/index.html')
+    app.get('/all', (request, response)=>{
+        collection.find().toArray()
+        .then(result => {
+            console.log(result)
+            response.json(result)
+        })
+        .catch(error => console.log(error))
     })
     
     app.get('/api/:alienName', (request,response)=>{
-        const aliensName = request.params.alienName.toLowerCase()
-        collection.find({name: aliensName}).toArray()
+        const aliensName = request.params.alienName
+        collection.find({speciesName: aliensName}).toArray()
         .then(result => {
             console.log(result)
             response.json(result)
