@@ -74,8 +74,12 @@ MongoClient.connect(connectionString)
     console.log(`Connected to database`)
     const db = client.db('star-trek-api')
     const collection = db.collection('alien-info')
+
+    app.get('/', (request, response) => {
+        response.sendFile(__dirname + '/index.html')
+    })
     
-    app.get('/all', (request, response)=>{
+    app.get('/api/species/all', (request, response)=>{
         collection.find().toArray()
         .then(result => {
             console.log(result)
@@ -84,7 +88,7 @@ MongoClient.connect(connectionString)
         .catch(error => console.log(error))
     })
     
-    app.get('/api/:alienName', (request,response)=>{
+    app.get('/api/species/:alienName', (request,response)=>{
         const aliensName = request.params.alienName
         collection.find({speciesName: aliensName}).toArray()
         .then(result => {
